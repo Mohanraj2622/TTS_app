@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🗣️ Tamil & English TTS</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    /* Animated background elements */
+    body::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: float 20s ease-in-out infinite;
+      z-index: 0;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+    
+    .container {
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      text-align: center;
+      width: 100%;
+      max-width: 550px;
+      position: relative;
+      z-index: 1;
+      animation: slideIn 0.8s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .header {
+      margin-bottom: 30px;
+    }
+    
+    h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      letter-spacing: -0.5px;
+    }
+    
+    .subtitle {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 400;
+    }
+    
+    .input-group {
+      margin-bottom: 25px;
+      position: relative;
+    }
+    
+    .input-label {
+      display: block;
+      text-align: left;
+      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    textarea {
+      width: 100%;
+      height: 140px;
+      padding: 20px;
+      border-radius: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      color: #ffffff;
+      font-size: 16px;
+      font-family: inherit;
+      resize: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      line-height: 1.5;
+    }
+    
+    textarea::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    select {
+      width: 100%;
+      padding: 16px 20px;
+      font-size: 16px;
+      border-radius: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      color: #ffffff;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 16px center;
+      background-repeat: no-repeat;
+      background-size: 16px;
+      padding-right: 50px;
+    }
+    
+    select:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    select option {
+      background: #667eea;
+      color: #ffffff;
+      padding: 10px;
+    }
+    
+    .speak-button {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+      color: white;
+      border: none;
+      padding: 18px 40px;
+      font-size: 18px;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .speak-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+    
+    .speak-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+    }
+    
+    .speak-button:hover::before {
+      left: 100%;
+    }
+    
+    .speak-button:active {
+      transform: translateY(-1px);
+    }
+    
+    .speak-button.speaking {
+      background: linear-gradient(135deg, #feca57, #ff9ff3);
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: translateY(-3px) scale(1); }
+      50% { transform: translateY(-3px) scale(1.02); }
+    }
+    
+    .volume-controls {
+      display: flex;
+      gap: 15px;
+      margin: 20px 0;
+      align-items: center;
+    }
+    
+    .volume-label {
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
+      font-size: 14px;
+      min-width: 60px;
+    }
+    
+    .volume-slider {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.2);
+      outline: none;
+      appearance: none;
+      cursor: pointer;
+    }
+    
+    .volume-slider::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(255, 107, 107, 0.5);
+    }
+    
+    .volume-slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 8px rgba(255, 107, 107, 0.5);
+    }
+    
+    .footer {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 400;
+    }
+    
+    .footer a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    .footer a:hover {
+      color: #ff6b6b;
+    }
+    
+    .status-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #10ac84;
+      margin-right: 8px;
+      animation: breathe 2s ease-in-out infinite;
+    }
+    
+    @keyframes breathe {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    /* Responsive design */
+    @media (max-width: 600px) {
+      .container {
+        padding: 25px;
+        margin: 10px;
+      }
+      
+      h2 {
+        font-size: 24px;
+      }
+      
+      textarea {
+        height: 120px;
+        padding: 16px;
+      }
+      
+      select, .speak-button {
+        padding: 14px 20px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>🗣️ Voice Synthesis Studio</h2>
+      <p class="subtitle">Tamil & English Text-to-Speech</p>
+    </div>
+    
+    <div class="input-group">
+      <label class="input-label">✍️ Enter your text</label>
+      <textarea id="text" placeholder="வணக்கம்! Hello, how are you today? Type your message here...">வணக்கம்! Hello, how are you today?</textarea>
+    </div>
+    
+    <div class="input-group">
+      <label class="input-label">🌐 Select language</label>
+      <select id="language">
+        <option value="ta-IN">🇮🇳 Tamil (India)</option>
+        <option value="en-IN">🇮🇳 English (India)</option>
+        <option value="en-US">🇺🇸 English (US)</option>
+        <option value="en-GB">🇬🇧 English (UK)</option>
+        <option value="hi-IN">🇮🇳 Hindi (India)</option>
+      </select>
+    </div>
+    
+    <div class="volume-controls">
+      <span class="volume-label">🔊 Volume</span>
+      <input type="range" id="volume" class="volume-slider" min="0" max="1" step="0.1" value="0.8">
+      <span class="volume-label">🐌 Speed</span>
+      <input type="range" id="rate" class="volume-slider" min="0.5" max="2" step="0.1" value="1">
+    </div>
+    
+    <button class="speak-button" onclick="speak()" id="speakBtn">
+      🎤 Speak Now
+    </button>
+    
+    <div class="footer">
+      <span class="status-indicator"></span>
+      Powered by <a href="#" onclick="return false;">Web Speech API</a> • Made with ❤️
+    </div>
+  </div>
+
+  <script>
+    let currentUtterance = null;
+    const speakBtn = document.getElementById('speakBtn');
+    const volumeSlider = document.getElementById('volume');
+    const rateSlider = document.getElementById('rate');
+    
+    function speak() {
+      // Stop any current speech
+      if (currentUtterance) {
+        window.speechSynthesis.cancel();
+        currentUtterance = null;
+        speakBtn.classList.remove('speaking');
+        speakBtn.innerHTML = '🎤 Speak Now';
+        return;
+      }
+      
+      const text = document.getElementById("text").value.trim();
+      if (!text) {
+        alert('Please enter some text to speak!');
+        return;
+      }
+      
+      const lang = document.getElementById("language").value;
+      const volume = parseFloat(volumeSlider.value);
+      const rate = parseFloat(rateSlider.value);
+      
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      currentUtterance.lang = lang;
+      currentUtterance.volume = volume;
+      currentUtterance.rate = rate;
+      currentUtterance.pitch = 1;
+      
+      // Find matching voice
+      const voices = speechSynthesis.getVoices();
+      const matchedVoice = voices.find(voice => voice.lang === lang);
+      if (matchedVoice) {
+        currentUtterance.voice = matchedVoice;
+      }
+      
+      // Update button state
+      speakBtn.classList.add('speaking');
+      speakBtn.innerHTML = '⏹️ Stop Speaking';
+      
+      // Event listeners
+      currentUtterance.onend = () => {
+        currentUtterance = null;
+        speakBtn.classList.remove('speaking');
+        speakBtn.innerHTML = '🎤 Speak Now';
+      };
+      
+      currentUtterance.onerror = () => {
+        currentUtterance = null;
+        speakBtn.classList.remove('speaking');
+        speakBtn.innerHTML = '🎤 Speak Now';
+        alert('An error occurred while speaking. Please try again.');
+      };
+      
+      window.speechSynthesis.speak(currentUtterance);
+    }
+    
+    // Load voices and update UI
+    function loadVoices() {
+      const voices = speechSynthesis.getVoices();
+      console.log('Available voices:', voices.length);
+    }
+    
+    // Initialize voices
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+    loadVoices();
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        speak();
+      }
+      if (e.key === 'Escape' && currentUtterance) {
+        speak(); // Stop speaking
+      }
+    });
+    
+    // Auto-resize textarea
+    const textarea = document.getElementById('text');
+    textarea.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+    });
+    
+    // Add some sample texts for different languages
+    const sampleTexts = {
+      'ta-IN': 'வணக்கம்! எப்படி இருக்கீங்க? இன்றைக்கு எப்படி இருக்கு?',
+      'en-IN': 'Hello! How are you doing today? This is a test of English speech.',
+      'en-US': 'Hi there! Welcome to our text-to-speech application.',
+      'en-GB': 'Good day! This is British English text-to-speech.',
+      'hi-IN': 'नमस्ते! आप कैसे हैं? आज कैसा दिन है?'
+    };
+    
+    // Update sample text when language changes
+    document.getElementById('language').addEventListener('change', function() {
+      const selectedLang = this.value;
+      const textArea = document.getElementById('text');
+      if (sampleTexts[selectedLang] && textArea.value === textArea.defaultValue) {
+        textArea.value = sampleTexts[selectedLang];
+      }
+    });
+  </script>
+</body>
+</html>
